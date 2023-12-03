@@ -212,8 +212,10 @@
           img.addEventListener('click', function() {
             const newImg = new Image();
             newImg.onload = function() {
+                clearCanvas(); // Clear the previous image
                 backgroundImage = newImg;
                 drawBackgroundImage();
+                modal.style.display = "none";
             }
             newImg.src = photo.urls.full;
           });
