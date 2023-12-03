@@ -33,15 +33,21 @@
         background-color: rgba(0,0,0,0.4); 
     }
     .modal-content {
+        position: relative;
         background-color: #fefefe;
         margin: 15% auto; 
         padding: 20px;
         border: 1px solid #888;
         width: 80%; 
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
     }
     .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
         color: #aaa;
-        float: right;
         font-size: 28px;
         font-weight: bold;
     }
@@ -50,6 +56,10 @@
         color: black;
         text-decoration: none;
         cursor: pointer;
+    }
+    .small-image {
+        max-width: 100px;
+        max-height: 100px;
     }
 </style>
 </head>
@@ -63,9 +73,8 @@
     <button id="animalSearchButton" class="control-button">🦁 Search</button>
 </div>
 <div id="myModal" class="modal">
+  <span class="close">&times;</span>
   <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Animal search content...</p>
   </div>
 </div>
 <script>
@@ -180,8 +189,32 @@
     var btn = document.getElementById("animalSearchButton");
     var span = document.getElementsByClassName("close")[0];
 
+    let page = 1;
+
     btn.onclick = function() {
       modal.style.display = "block";
+      const modalContent = document.querySelector('.modal-content');
+      modalContent.innerHTML = ''; // Clear existing images
+
+      // Unsplash API request
+      fetch(`https://api.unsplash.com/search/photos?page=${page}&query=animals&per_page=10`, {
+        headers: {
+          'Authorization': 'Client-ID 0eGlvOmkRrJhaSTAQHnxWm_q4ktsxrzruuBADWYBbbo'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        const modalContent = document.querySelector('.modal-content');
+        data.results.forEach(photo => {
+          const img = document.createElement('img');
+          img.src = photo.urls.small;
+          img.classList.add('small-image'); // Add the small-image class
+          modalContent.appendChild(img);
+        });
+      })
+      .catch(error => console.error(error));
+
+      page++;
     }
 
     span.onclick = function() {
