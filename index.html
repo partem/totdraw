@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tosha Draw</title>
+<title>TotDraw</title>
 <style>
     body, html { margin: 0; padding: 0; overflow: hidden; }
     canvas { width: 100%; height: 80%; display: block; }
@@ -13,7 +13,7 @@
         text-align: center; 
     }
     .control-button { 
-        font-size: 20px; 
+        font-size: 20px;  
         margin: 10px;
         cursor: pointer;
     }
@@ -26,7 +26,7 @@
 <canvas id="drawingCanvas"></canvas>
 <div id="controls">
     <button id="clearButton" class="control-button">🗑️ Clear</button>
-    <input type="file" id="uploadButton" class="hidden" accept="image/*">
+    <input type="file" id="uploadButton" class="hidden" accept="image/*" capture="filesystem">
     <label for="uploadButton" class="control-button upload-button">🖼️ Upload</label>
     <input type="color" id="colorPicker" class="control-button">
 </div>
