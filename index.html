@@ -13,7 +13,8 @@
         text-align: center; 
     }
     .control-button { 
-        font-size: 20px;  
+        font-size: 30px;  
+        padding: 10px;
         margin: 10px;
         cursor: pointer;
     }
@@ -46,6 +47,11 @@
     let isDrawing = false;
 
     function startDrawing(e) {
+        if (e.touches[0].touchType === 'stylus') {
+            // Handle Apple Pencil touch
+        } else {
+            // Handle finger touch
+        }
         isDrawing = true;
         draw(e);
         e.preventDefault(); // Prevent default behavior
@@ -85,12 +91,8 @@
             reader.onload = function(evt) {
                 const img = new Image();
                 img.onload = function() {
-                    // Resize and draw background image
-                    const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
-                    const newWidth = img.width * ratio;
-                    const newHeight = img.height * ratio;
-                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
                     backgroundImage = img;
+                    drawBackgroundImage(); // Use the drawBackgroundImage function
                 }
                 img.src = evt.target.result;
             };
@@ -99,10 +101,14 @@
     }
 
     function drawBackgroundImage() {
-        const ratio = Math.min(canvas.width / backgroundImage.width, canvas.height / backgroundImage.height);
-        const newWidth = backgroundImage.width * ratio;
-        const newHeight = backgroundImage.height * ratio;
-        ctx.drawImage(backgroundImage, 0, 0, newWidth, newHeight);
+        if (backgroundImage) {
+            const ratio = Math.min(canvas.width / backgroundImage.width, canvas.height / backgroundImage.height);
+            const newWidth = backgroundImage.width * ratio;
+            const newHeight = backgroundImage.height * ratio;
+            const offsetX = (canvas.width - newWidth) / 2;
+            const offsetY = (canvas.height - newHeight) / 2;
+            ctx.drawImage(backgroundImage, offsetX, offsetY, newWidth, newHeight);
+        }
     }
 
     // Event listeners for touch and mouse
