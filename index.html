@@ -84,7 +84,7 @@
     let isDrawing = false;
 
     function startDrawing(e) {
-        if (e.touches[0].touchType === 'stylus') {
+        if (e.touches && e.touches[0].touchType === 'stylus') {
             // Handle Apple Pencil touch
         } else {
             // Handle finger touch
@@ -135,6 +135,7 @@
             };
             reader.readAsDataURL(file);
         }
+        e.target.value = '';
     }
 
     function drawBackgroundImage() {
