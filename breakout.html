@@ -132,6 +132,19 @@
 	        paddleX = relativeX - paddleWidth / 2;
 	    }
 	}
+	
+	document.addEventListener("touchmove", touchMoveHandler, false);
+
+	function touchMoveHandler(e) {
+	    var touch = e.touches[0]; // Get the first touch
+	    var relativeX = touch.clientX - canvas.offsetLeft;
+	
+	    if(relativeX > 0 && relativeX < canvas.width) {
+	        paddleX = relativeX - paddleWidth / 2;
+	    }
+	
+	    e.preventDefault(); // Prevent scrolling when touching the canvas
+	}
 	    
         function drawScore() {
             document.getElementById("score").innerHTML = "Score: " + score + " | Lives: " + lives;
