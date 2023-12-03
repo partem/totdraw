@@ -104,30 +104,35 @@
             ctx.closePath();
         }
 
-		// ... [rest of the code remains the same]
+	var brickColors = ["#FF5733", "#33FF57", "#3357FF", "#F0F033", "#FF33F0"]; // Array of colors
 
-		var brickColors = ["#FF5733", "#33FF57", "#3357FF", "#F0F033", "#FF33F0"]; // Array of colors
-
-		function drawBricks() {
-		    for(var c=0; c<brickColumnCount; c++) {
-		        for(var r=0; r<brickRowCount; r++) {
-		            if(bricks[c][r].status == 1) {
-		                var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-		                var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-		                bricks[c][r].x = brickX;
-		                bricks[c][r].y = brickY;
-		                ctx.beginPath();
-		                ctx.rect(brickX, brickY, brickWidth, brickHeight);
-		                ctx.fillStyle = brickColors[r % brickColors.length]; // Use a color from the array
-		                ctx.fill();
-		                ctx.closePath();
-		            }
-		        }
+	function drawBricks() {
+	    for(var c=0; c<brickColumnCount; c++) {
+		for(var r=0; r<brickRowCount; r++) {
+		    if(bricks[c][r].status == 1) {
+			var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+			var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+			bricks[c][r].x = brickX;
+			bricks[c][r].y = brickY;
+			ctx.beginPath();
+			ctx.rect(brickX, brickY, brickWidth, brickHeight);
+			ctx.fillStyle = brickColors[r % brickColors.length]; // Use a color from the array
+			ctx.fill();
+			ctx.closePath();
 		    }
 		}
+	    }
+	}
 
-		// ... [rest of the code remains the same]
-        
+	document.addEventListener("mousemove", mouseMoveHandler, false);
+
+	function mouseMoveHandler(e) {
+	    var relativeX = e.clientX - canvas.offsetLeft;
+	    if(relativeX > 0 && relativeX < canvas.width) {
+	        paddleX = relativeX - paddleWidth / 2;
+	    }
+	}
+	    
         function drawScore() {
             document.getElementById("score").innerHTML = "Score: " + score + " | Lives: " + lives;
         }
