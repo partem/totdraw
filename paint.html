@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Drawing App</title>
+<style>
+    body, html { margin: 0; padding: 0; }
+    canvas { width: 100%; height: 90%; display: block; }
+    #clearButton { 
+        width: 100%; 
+        height: 10%; 
+        font-size: 20px;
+    }
+</style>
+</head>
+<body>
+<canvas id="drawingCanvas"></canvas>
+<button id="clearButton">Clear</button>
+<script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set up the canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight * 0.9; // Adjusted for button height
+
+    let isDrawing = false;
+
+    function startDrawing(e) {
+        isDrawing = true;
+        draw(e);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        ctx.lineWidth = 5; // Line width
+        ctx.lineCap = 'round'; // Line style
+
+        // Get mouse position if mouse event, otherwise touch position
+        const x = e.clientX || e.touches[0].clientX;
+        const y = e.clientY || e.touches[0].clientY;
+
+        ctx.lineTo(x, y - canvas.offsetTop); // Draw line considering the offset
+        ctx.stroke();
+        ctx.beginPath(); // Begin new path
+        ctx.moveTo(x, y - canvas.offsetTop);
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        ctx.beginPath(); // Begin a new path to start a new line
+    }
+
+    // Clear the canvas
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Event listeners for touch
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
+
+    // Event listeners for mouse
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    // Event listener for the clear button
+    document.getElementById('clearButton').addEventListener('click', clearCanvas);
+</script>
+</body>
+</html>
