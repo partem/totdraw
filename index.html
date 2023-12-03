@@ -209,6 +209,14 @@
           const img = document.createElement('img');
           img.src = photo.urls.small;
           img.classList.add('small-image'); // Add the small-image class
+          img.addEventListener('click', function() {
+            const newImg = new Image();
+            newImg.onload = function() {
+                backgroundImage = newImg;
+                drawBackgroundImage();
+            }
+            newImg.src = photo.urls.full;
+          });
           modalContent.appendChild(img);
         });
       })
