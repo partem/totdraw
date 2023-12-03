@@ -21,32 +21,6 @@
     .hidden {
         display: none;
     }
-    #animalModal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    #loadingIndicator {
-        font-size: 30px;
-        color: white;
-    }
-    #imageGrid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    #imageGrid img {
-        width: 100px;
-        height: 100px;
-        margin: 10px;
-        cursor: pointer;
-    }
 </style>
 </head>
 <body>
@@ -55,13 +29,7 @@
     <button id="clearButton" class="control-button">🗑️ Clear</button>
     <input type="file" id="uploadButton" class="hidden" accept="image/*">
     <label for="uploadButton" class="control-button upload-button">🖼️ Upload</label>
-    <button id="animalButton" class="control-button">🦁 Animals</button>
-    <input type="text" id="animalSearch" class="control-button">
     <input type="color" id="colorPicker" class="control-button">
-</div>
-<div id="animalModal" class="hidden">
-    <div id="loadingIndicator">Loading...</div>
-    <div id="imageGrid"></div>
 </div>
 <script>
     document.addEventListener('dblclick', function(event) {
@@ -116,13 +84,20 @@
     }
 
     // Upload and draw background image
-    function uploadAndDrawBackground(url) {
-        const img = new Image();
-        img.onload = function() {
-            backgroundImage = img;
-            drawBackgroundImage();
+    function uploadAndDrawBackground(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const img = new Image();
+                img.onload = function() {
+                    backgroundImage = img;
+                    drawBackgroundImage(); // Use the drawBackgroundImage function
+                }
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
         }
-        img.src = url;
     }
 
     function drawBackgroundImage() {
@@ -156,38 +131,6 @@
     document.getElementById('colorPicker').addEventListener('change', function(e) {
         currentColor = e.target.value;
     });
-
-    // Event listener for the animal search button
-    document.getElementById('animalButton').addEventListener('click', searchAnimals);
-
-    function searchAnimals() {
-        // Show the modal and the loading indicator
-        document.getElementById('animalModal').classList.remove('hidden');
-        document.getElementById('loadingIndicator').classList.remove('hidden');
-
-        fetch('https://api.unsplash.com/search/photos?query=animals&client_id=0eGlvOmkRrJhaSTAQHnxWm_q4ktsxrzruuBADWYBbbo&per_page=20')
-            .then(response => response.json())
-            .then(data => {
-                // Hide the loading indicator
-                document.getElementById('loadingIndicator').classList.add('hidden');
-
-                // Display the images in the grid
-                const imageGrid = document.getElementById('imageGrid');
-                imageGrid.innerHTML = '';
-                data.results.forEach(result => {
-                    const img = document.createElement('img');
-                    img.src = result.urls.small;
-                    img.addEventListener('click', function() {
-                        // Hide the modal when an image is clicked
-                        document.getElementById('animalModal').classList.add('hidden');
-
-                        // Draw the clicked image on the canvas
-                        uploadAndDrawBackground(result.urls.full);
-                    });
-                    imageGrid.appendChild(img);
-                });
-            });
-    }
 
     // Prevent default scrolling on touch events
     document.addEventListener('touchmove', function(e) {
