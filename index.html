@@ -21,6 +21,36 @@
     .hidden {
         display: none;
     }
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgba(0,0,0,0.4); 
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
@@ -30,6 +60,13 @@
     <input type="file" id="uploadButton" class="hidden" accept="image/*">
     <label for="uploadButton" class="control-button upload-button">🖼️ Upload</label>
     <input type="color" id="colorPicker" class="control-button">
+    <button id="animalSearchButton" class="control-button">🦁 Search</button>
+</div>
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Animal search content...</p>
+  </div>
 </div>
 <script>
     document.addEventListener('dblclick', function(event) {
@@ -136,6 +173,25 @@
     document.addEventListener('touchmove', function(e) {
         e.preventDefault();
     }, { passive: false });
+
+    // Modal functionality
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("animalSearchButton");
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
 </script>
 </body>
 </html>
