@@ -31,6 +31,9 @@
     <input type="color" id="colorPicker" class="control-button">
 </div>
 <script>
+    document.addEventListener('dblclick', function(event) {
+        event.preventDefault();
+    });
     const canvas = document.getElementById('drawingCanvas');
     const ctx = canvas.getContext('2d');
     let backgroundImage = null;
