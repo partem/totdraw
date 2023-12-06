@@ -72,6 +72,9 @@
         max-width: 100px;
         max-height: 100px;
     }
+    .control-button.pressed {
+        background-color: #ddd;
+    }
 </style>
 </head>
 <body>
@@ -83,6 +86,8 @@
     <input type="color" id="colorPicker" class="control-button">
     <button id="animalSearchButton" class="control-button">🦁</button>
     <button id="dinosaurButton" class="control-button">🦖</button>
+    <button id="carButton" class="control-button">🚗</button>
+    <button id="birdButton" class="control-button">🦜</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -200,10 +205,14 @@
     var modal = document.getElementById("myModal");
     var btn = document.getElementById("animalSearchButton");
     var dinosaurBtn = document.getElementById("dinosaurButton");
+    var carBtn = document.getElementById("carButton");
+    var birdBtn = document.getElementById("birdButton");
     var span = document.getElementsByClassName("close")[0];
 
     let animalPage = 1;
     let dinosaurPage = 1;
+    let carPage = 1;
+    let birdPage = 1;
 
     function fetchImages(searchTerm, page) {
       modal.style.display = "block";
@@ -221,7 +230,7 @@
         const modalContent = document.querySelector('.modal-content');
         data.results.forEach(photo => {
           const img = document.createElement('img');
-          img.src = photo.urls.small;
+          img.src = photo.urls.thumb;
           img.classList.add('small-image'); // Add the small-image class
           img.addEventListener('click', function() {
             const newImg = new Image();
@@ -231,7 +240,7 @@
                 drawBackgroundImage();
                 modal.style.display = "none";
             }
-            newImg.src = photo.urls.full;
+            newImg.src = photo.urls.regular;
           });
           modalContent.appendChild(img);
         });
@@ -247,6 +256,16 @@
     dinosaurBtn.onclick = function() {
       fetchImages('dinosaurs', dinosaurPage);
       dinosaurPage++;
+    }
+
+    carBtn.onclick = function() {
+      fetchImages('cars', carPage);
+      carPage++;
+    }
+
+    birdBtn.onclick = function() {
+      fetchImages('birds', birdPage);
+      birdPage++;
     }
 
     span.onclick = function() {
