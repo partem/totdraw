@@ -88,6 +88,7 @@
     <button id="dinosaurButton" class="control-button">🦖</button>
     <button id="carButton" class="control-button">🚗</button>
     <button id="birdButton" class="control-button">🦜</button>
+    <button id="eraserButton" class="control-button">🩹 Eraser</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -102,6 +103,7 @@
     const ctx = canvas.getContext('2d');
     let backgroundImage = null;
     let currentColor = '#000000'; // Default color
+    let isEraserActive = false;
 
     // Set up the canvas size
     canvas.width = window.innerWidth;
@@ -194,12 +196,19 @@
     // Color picker event listener
     document.getElementById('colorPicker').addEventListener('change', function(e) {
         currentColor = e.target.value;
+        isEraserActive = false; // Disable eraser mode
+        document.getElementById('eraserButton').classList.remove('pressed'); // Remove pressed state
     });
 
     // Prevent default scrolling on touch events
     document.addEventListener('touchmove', function(e) {
         e.preventDefault();
     }, { passive: false });
+
+    // Suppress right-click menu
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
 
     // Modal functionality
     var modal = document.getElementById("myModal");
@@ -277,6 +286,17 @@
         modal.style.display = "none";
       }
     }
+
+    document.getElementById('eraserButton').addEventListener('click', function() {
+        isEraserActive = !isEraserActive; // Toggle eraser mode
+        if (isEraserActive) {
+            currentColor = '#FFFFFF'; // Set color to white for eraser
+            this.classList.add('pressed'); // Add pressed state
+        } else {
+            currentColor = '#000000'; // Set color back to black when not in eraser mode
+            this.classList.remove('pressed'); // Remove pressed state
+        }
+    });
 </script>
 </body>
 </html>
