@@ -80,15 +80,16 @@
 <body>
 <canvas id="drawingCanvas"></canvas>
 <div id="controls">
-    <button id="clearButton" class="control-button">🗑️ Clear</button>
+    <button id="clearButton" class="control-button">🗑️</button>
     <button id="eraserButton" class="control-button">🧽</button>
     <input type="file" id="uploadButton" class="hidden" accept="image/*">
-    <label for="uploadButton" class="control-button upload-button">🖼️ Upload</label>
+    <label for="uploadButton" class="control-button upload-button">🖼️</label>
     <input type="color" id="colorPicker" class="control-button">
     <button id="animalSearchButton" class="control-button">🦁</button>
     <button id="dinosaurButton" class="control-button">🦖</button>
     <button id="carButton" class="control-button">🚗</button>
     <button id="birdButton" class="control-button">🦜</button>
+    <button id="insectButton" class="control-button">🐞</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -210,25 +211,20 @@
         e.preventDefault();
     });
 
-    // Disable long press on everything except for canvas
-    //document.addEventListener('touchstart', function(e) {
-    //    if (e.target !== canvas) {
-    //        e.preventDefault();
-    //    }
-    //}, { passive: false });
-
     // Modal functionality
     var modal = document.getElementById("myModal");
     var btn = document.getElementById("animalSearchButton");
     var dinosaurBtn = document.getElementById("dinosaurButton");
     var carBtn = document.getElementById("carButton");
     var birdBtn = document.getElementById("birdButton");
+    var insectBtn = document.getElementById("insectButton");
     var span = document.getElementsByClassName("close")[0];
 
     let animalPage = 1;
     let dinosaurPage = 1;
     let carPage = 1;
     let birdPage = 1;
+    let insectPage = 1;
 
     function fetchImages(searchTerm, page) {
       modal.style.display = "block";
@@ -284,6 +280,11 @@
       birdPage++;
     }
 
+    insectBtn.onclick = function() {
+      fetchImages('insects', insectPage);
+      insectPage++;
+    }
+
     span.onclick = function() {
       modal.style.display = "none";
     }
@@ -303,6 +304,15 @@
             currentColor = '#000000'; // Set color back to black when not in eraser mode
             this.classList.remove('pressed'); // Remove pressed state
         }
+    });
+
+    window.addEventListener('resize', function() {
+        // Set up the canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
+
+        // Redraw the background image
+        drawBackgroundImage();
     });
 </script>
 </body>
