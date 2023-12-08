@@ -211,6 +211,20 @@
         e.preventDefault();
     });
 
+    // Suppress long press on everything except the canvas
+    let touchStartTimer;
+    document.addEventListener('touchstart', function(e) {
+        if (e.target !== canvas) {
+            touchStartTimer = setTimeout(function() {
+                e.preventDefault();
+            }, 1000); // 1000ms = 1 second
+        }
+    }, { passive: false });
+
+    document.addEventListener('touchend', function() {
+        clearTimeout(touchStartTimer);
+    });
+
     // Modal functionality
     var modal = document.getElementById("myModal");
     var btn = document.getElementById("animalSearchButton");
