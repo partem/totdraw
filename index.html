@@ -90,6 +90,7 @@
     <button id="carButton" class="control-button">🚗</button>
     <button id="birdButton" class="control-button">🦜</button>
     <button id="insectButton" class="control-button">🐞</button>
+    <button id="natureButton" class="control-button">🌳</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -232,6 +233,7 @@
     var carBtn = document.getElementById("carButton");
     var birdBtn = document.getElementById("birdButton");
     var insectBtn = document.getElementById("insectButton");
+    var natureBtn = document.getElementById("natureButton");
     var span = document.getElementsByClassName("close")[0];
 
     let animalPage = 1;
@@ -239,14 +241,15 @@
     let carPage = 1;
     let birdPage = 1;
     let insectPage = 1;
+    let naturePage = 1;
 
-    function fetchImages(searchTerm, page) {
+    function fetchImages(searchTerm, page, orientation = '') {
       modal.style.display = "block";
       const modalContent = document.querySelector('.modal-content');
       modalContent.innerHTML = ''; // Clear existing images
 
       // Unsplash API request
-      fetch(`https://api.unsplash.com/search/photos?page=${page}&query=${searchTerm}&per_page=10`, {
+      fetch(`https://api.unsplash.com/search/photos?page=${page}&query=${searchTerm}${orientation ? `&orientation=${orientation}` : ''}&per_page=10`, {
         headers: {
           'Authorization': 'Client-ID 0eGlvOmkRrJhaSTAQHnxWm_q4ktsxrzruuBADWYBbbo'
         }
@@ -267,6 +270,18 @@
                 modal.style.display = "none";
             }
             newImg.src = photo.urls.regular;
+          });
+          img.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+          });
+          let touchStart = 0;
+          img.addEventListener('touchstart', function(e) {
+            touchStart = Date.now();
+          });
+          img.addEventListener('touchend', function(e) {
+            if (Date.now() - touchStart > 500) { // If touch lasts for more than 500ms
+                e.preventDefault();
+            }
           });
           modalContent.appendChild(img);
         });
@@ -297,6 +312,11 @@
     insectBtn.onclick = function() {
       fetchImages('insects', insectPage);
       insectPage++;
+    }
+
+    natureBtn.onclick = function() {
+      fetchImages('nature', naturePage, 'landscape');
+      naturePage++;
     }
 
     span.onclick = function() {
