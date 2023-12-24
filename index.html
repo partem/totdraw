@@ -100,6 +100,7 @@
     <button id="birdButton" class="control-button">🦜</button>
     <button id="insectButton" class="control-button">🐞</button>
     <button id="natureButton" class="control-button">🌳</button>
+    <button id="peopleButton" class="control-button">🧑</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -261,6 +262,7 @@
     var birdBtn = document.getElementById("birdButton");
     var insectBtn = document.getElementById("insectButton");
     var natureBtn = document.getElementById("natureButton");
+    var peopleBtn = document.getElementById("peopleButton");
     var span = document.getElementsByClassName("close")[0];
 
     let animalPage = 1;
@@ -269,6 +271,7 @@
     let birdPage = 1;
     let insectPage = 1;
     let naturePage = 1;
+    let peoplePage = 1;
 
     function fetchImages(searchTerm, page, orientation = '') {
       modal.style.display = "block";
@@ -344,6 +347,11 @@
     natureBtn.onclick = function() {
       fetchImages('nature', naturePage, 'landscape');
       naturePage++;
+    }
+
+    peopleBtn.onclick = function() {
+      fetchImages('people', peoplePage);
+      peoplePage++;
     }
 
     span.onclick = function() {
