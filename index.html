@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TotDraw</title>
 
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="./fav_icon.png">
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6L1KQZT5MC"></script>
 <script>
@@ -28,6 +31,9 @@
         padding: 10px;
         margin: 10px;
         cursor: pointer;
+        width: 50px; 
+        height: 50px; 
+        border: none;
     }
     .hidden {
         display: none;
@@ -84,7 +90,10 @@
     <button id="eraserButton" class="control-button">🧽</button>
     <input type="file" id="uploadButton" class="hidden" accept="image/*">
     <label for="uploadButton" class="control-button upload-button">🖼️</label>
-    <input type="color" id="colorPicker" class="control-button">
+    <button id="redButton" class="control-button" style="background-color: red;"></button>
+    <button id="greenButton" class="control-button" style="background-color: green;"></button>
+    <button id="blueButton" class="control-button" style="background-color: blue;"></button>
+    <button id="yellowButton" class="control-button" style="background-color: yellow;"></button>
     <button id="animalSearchButton" class="control-button">🦁</button>
     <button id="dinosaurButton" class="control-button">🦖</button>
     <button id="carButton" class="control-button">🚗</button>
@@ -195,9 +204,27 @@
     // Event listener for the upload button
     document.getElementById('uploadButton').addEventListener('change', uploadAndDrawBackground);
 
-    // Color picker event listener
-    document.getElementById('colorPicker').addEventListener('change', function(e) {
-        currentColor = e.target.value;
+    // Color buttons event listeners
+    document.getElementById('redButton').addEventListener('click', function() {
+        currentColor = 'red';
+        isEraserActive = false; // Disable eraser mode
+        document.getElementById('eraserButton').classList.remove('pressed'); // Remove pressed state
+    });
+
+    document.getElementById('greenButton').addEventListener('click', function() {
+        currentColor = 'green';
+        isEraserActive = false; // Disable eraser mode
+        document.getElementById('eraserButton').classList.remove('pressed'); // Remove pressed state
+    });
+
+    document.getElementById('blueButton').addEventListener('click', function() {
+        currentColor = 'blue';
+        isEraserActive = false; // Disable eraser mode
+        document.getElementById('eraserButton').classList.remove('pressed'); // Remove pressed state
+    });
+
+    document.getElementById('yellowButton').addEventListener('click', function() {
+        currentColor = 'yellow';
         isEraserActive = false; // Disable eraser mode
         document.getElementById('eraserButton').classList.remove('pressed'); // Remove pressed state
     });

@@ -8,8 +8,8 @@ let keys = {};
 const gravity = 0.5;
 
 const player = {
-    x: 100,
-    y: canvas.height - 150,
+    x: 400,
+    y: canvas.height - 150 - 200,
     width: 50,
     height: 50,
     speed: 5,
@@ -19,15 +19,30 @@ const player = {
 };
 
 const walls = [
-    {x: 200, y: player.ground - 50, width: 50, height: 50},
-    {x: 300, y: player.ground - 50, width: 50, height: 50},
-    // Add more walls as needed
+    {x: 100, y: player.ground - 50, width: 150, height: 50},
+    {x: 125, y: player.ground - 100, width: 100, height: 50},
+    {x: 150, y: player.ground - 150, width: 50, height: 50},
 ];
 
 function gameLoop() {
     update();
     draw();
     requestAnimationFrame(gameLoop);
+}
+
+// Load the sprite sheet
+var spriteSheet = document.getElementById('spriteSheet');
+
+// Function to draw the bumblebee sprite
+function drawBee(x, y) {
+    ctx.drawImage(spriteSheet, 640, 100, 512, 300, x, y, 50, 50);
+}
+
+// Function to draw the wall sprite
+function drawWall(x, y, width, height) {
+    for (let i = 0; i < width / 50; i++) {
+        ctx.drawImage(spriteSheet, 100, 10, 50, 50, x + i * 50, y, 50, 50);
+    }
 }
 
 function draw() {
@@ -38,14 +53,12 @@ function draw() {
     ctx.fillRect(0, player.ground, canvas.width, canvas.height - player.ground);
 
     // Draw walls
-    ctx.fillStyle = 'brown';
     for (let wall of walls) {
-        ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+        drawWall(wall.x, wall.y, wall.width, wall.height);
     }
 
     // Draw player
-    ctx.fillStyle = 'red'; 
-    ctx.fillRect(player.x, player.y - player.height, player.width, player.height); 
+    drawBee(player.x, player.y);
 }
 
 gameLoop();
@@ -70,8 +83,8 @@ function update() {
     }
     player.dy += gravity;
     player.y += player.dy;
-    if (player.y > player.ground) {
-        player.y = player.ground;
+    if (player.y + player.height > player.ground) {
+        player.y = player.ground - player.height;
         player.dy = 0;
         player.jumping = false;
     }
@@ -83,7 +96,7 @@ function update() {
         }
     }
 }
-
+/*
 function collidingWithWall(x, y) {
     for (let wall of walls) {
         if (x < wall.x + wall.width &&
@@ -95,3 +108,15 @@ function collidingWithWall(x, y) {
     }
     return false;
 }
+*/
+function collidingWithWall(x, y) {
+    for (let wall of walls) {
+        if (x + player.width > wall.x && 
+            y + player.height > wall.y &&
+            x < wall.x + wall.width) {
+            return true;
+        }
+    }
+    return false;
+}
+
