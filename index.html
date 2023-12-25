@@ -58,10 +58,11 @@
         margin: 15% auto; 
         padding: 20px;
         border: 1px solid #888;
-        width: 80%; 
+        width: 50%; 
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(5, 1fr); /* 5 columns */
+        grid-template-rows: repeat(2, 1fr); /* 2 rows */
+        gap: 25px;
     }
     .close {
         position: absolute;
@@ -104,6 +105,7 @@
     <button id="insectButton" class="control-button">🐞</button>
     <button id="natureButton" class="control-button">🌳</button>
     <button id="peopleButton" class="control-button">🧑</button>
+    <button id="plantButton" class="control-button">🌿</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -266,6 +268,7 @@
     var insectBtn = document.getElementById("insectButton");
     var natureBtn = document.getElementById("natureButton");
     var peopleBtn = document.getElementById("peopleButton");
+    var plantBtn = document.getElementById("plantButton");
     var span = document.getElementsByClassName("close")[0];
 
     let animalPage = 1;
@@ -275,6 +278,12 @@
     let insectPage = 1;
     let naturePage = 1;
     let peoplePage = 1;
+    let plantPage = 1;
+
+    function randomColor() {
+        const colors = ['red', 'green', 'blue', 'yellow'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
 
     function fetchImages(searchTerm, page, orientation = '') {
       modal.style.display = "block";
@@ -289,35 +298,42 @@
       })
       .then(response => response.json())
       .then(data => {
-        const modalContent = document.querySelector('.modal-content');
-        data.results.forEach(photo => {
-          const img = document.createElement('img');
-          img.src = photo.urls.thumb;
-          img.classList.add('small-image'); // Add the small-image class
-          img.addEventListener('click', function() {
-            const newImg = new Image();
-            newImg.onload = function() {
-                clearCanvas(); // Clear the previous image
-                backgroundImage = newImg;
-                drawBackgroundImage();
-                modal.style.display = "none";
-            }
-            newImg.src = photo.urls.regular;
+        if (data.results.length === 0) {
+          // If no results, reset page number to 1 and fetch again
+          page = 1;
+          fetchImages(searchTerm, page, orientation);
+        } else {
+          const modalContent = document.querySelector('.modal-content');
+          data.results.forEach(photo => {
+            const img = document.createElement('img');
+            img.src = photo.urls.thumb;
+            img.classList.add('small-image'); // Add the small-image class
+            img.addEventListener('click', function() {
+              const newImg = new Image();
+              newImg.onload = function() {
+                  clearCanvas(); // Clear the previous image
+                  backgroundImage = newImg;
+                  drawBackgroundImage();
+                  modal.style.display = "none";
+              }
+              newImg.src = photo.urls.regular;
+            });
+            img.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
+            let touchStart = 0;
+            img.addEventListener('touchstart', function(e) {
+              touchStart = Date.now();
+            });
+            img.addEventListener('touchend', function(e) {
+              if (Date.now() - touchStart > 500) { // If touch lasts for more than 500ms
+                  e.preventDefault();
+              }
+            });
+            modalContent.appendChild(img);
           });
-          img.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-          });
-          let touchStart = 0;
-          img.addEventListener('touchstart', function(e) {
-            touchStart = Date.now();
-          });
-          img.addEventListener('touchend', function(e) {
-            if (Date.now() - touchStart > 500) { // If touch lasts for more than 500ms
-                e.preventDefault();
-            }
-          });
-          modalContent.appendChild(img);
-        });
+        }
+        currentColor = randomColor();
       })
       .catch(error => console.error(error));
     }
@@ -355,6 +371,11 @@
     peopleBtn.onclick = function() {
       fetchImages('people', peoplePage);
       peoplePage++;
+    }
+
+    plantBtn.onclick = function() {
+      fetchImages('plants', plantPage);
+      plantPage++;
     }
 
     span.onclick = function() {
