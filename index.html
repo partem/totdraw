@@ -105,6 +105,7 @@
     <button id="natureButton" class="control-button">🌳</button>
     <button id="peopleButton" class="control-button">🧑</button>
     <button id="plantButton" class="control-button">🌿</button>
+    <button id="houseButton" class="control-button">🏠</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -259,6 +260,7 @@
     var natureBtn = document.getElementById("natureButton");
     var peopleBtn = document.getElementById("peopleButton");
     var plantBtn = document.getElementById("plantButton");
+    var houseBtn = document.getElementById("houseButton");
     var span = document.getElementsByClassName("close")[0];
 
     let animalPage = 1;
@@ -269,6 +271,7 @@
     let naturePage = 1;
     let peoplePage = 1;
     let plantPage = 1;
+    let housePage = 1;
 
     function randomColor() {
         const colors = ['red', 'green', 'blue', 'yellow'];
@@ -366,6 +369,11 @@
     plantBtn.onclick = function() {
       fetchImages('plants', plantPage);
       plantPage++;
+    }
+
+    houseBtn.onclick = function() {
+      fetchImages('houses', housePage);
+      housePage++;
     }
 
     span.onclick = function() {
