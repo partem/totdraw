@@ -23,7 +23,17 @@
 
 <style>
     body, html { margin: 0; padding: 0; overflow: hidden; }
-    canvas { width: 100%; height: 80%; display: block; }
+    #canvasContainer {
+        position: relative;
+        width: 100%;
+        height: 80%;
+        display: grid;
+    }
+    canvas {
+        grid-area: 1 / 1 / 2 / 2;
+        width: 100%;
+        height: 100%;
+    }
     #controls { 
         width: 100%; 
         height: 20%; 
@@ -88,7 +98,10 @@
 </style>
 </head>
 <body>
-<canvas id="drawingCanvas"></canvas>
+<div id="canvasContainer">
+    <canvas id="imageCanvas"></canvas>
+    <canvas id="drawingCanvas"></canvas>
+</div>
 <div id="controls">
     <button id="clearButton" class="control-button">🗑️</button>
     <input type="file" id="uploadButton" class="hidden" accept="image/*">
@@ -116,14 +129,18 @@
     document.addEventListener('dblclick', function(event) {
         event.preventDefault();
     });
-    const canvas = document.getElementById('drawingCanvas');
-    const ctx = canvas.getContext('2d');
+    const imageCanvas = document.getElementById('imageCanvas');
+    const imageCtx = imageCanvas.getContext('2d');
+    const drawingCanvas = document.getElementById('drawingCanvas');
+    const drawingCtx = drawingCanvas.getContext('2d');
     let backgroundImage = null;
     let currentColor = '#000000'; // Default color
 
     // Set up the canvas size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
+    imageCanvas.width = window.innerWidth;
+    imageCanvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
+    drawingCanvas.width = window.innerWidth;
+    drawingCanvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
 
     let isDrawing = false;
 
@@ -140,27 +157,28 @@
 
     function draw(e) {
         if (!isDrawing) return;
-        ctx.lineWidth = 5; // Line width
-        ctx.lineCap = 'round'; // Line style
-        ctx.strokeStyle = currentColor; // Use the selected color
+        drawingCtx.lineWidth = 5; // Line width
+        drawingCtx.lineCap = 'round'; // Line style
+        drawingCtx.strokeStyle = currentColor; // Use the selected color
 
         const x = e.clientX || e.touches[0].clientX;
-        const y = e.clientY || e.touches[0].clientY - canvas.offsetTop;
+        const y = e.clientY || e.touches[0].clientY - drawingCanvas.offsetTop;
 
-        ctx.lineTo(x, y); // Draw line
-        ctx.stroke();
-        ctx.beginPath(); // Begin new path
-        ctx.moveTo(x, y);
+        drawingCtx.lineTo(x, y); // Draw line
+        drawingCtx.stroke();
+        drawingCtx.beginPath(); // Begin new path
+        drawingCtx.moveTo(x, y);
     }
 
     function stopDrawing() {
         isDrawing = false;
-        ctx.beginPath(); // Begin a new path to start a new line
+        drawingCtx.beginPath(); // Begin a new path to start a new line
     }
 
     // Clear the canvas and background
     function clearCanvas() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+        imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
         backgroundImage = null; // Clear the reference to the background image
     }
 
@@ -172,6 +190,7 @@
             reader.onload = function(evt) {
                 const img = new Image();
                 img.onload = function() {
+                    imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear the image canvas
                     backgroundImage = img;
                     drawBackgroundImage(); // Use the drawBackgroundImage function
                 }
@@ -184,24 +203,24 @@
 
     function drawBackgroundImage() {
         if (backgroundImage) {
-            const ratio = Math.min(canvas.width / backgroundImage.width, canvas.height / backgroundImage.height);
+            const ratio = Math.min(imageCanvas.width / backgroundImage.width, imageCanvas.height / backgroundImage.height);
             const newWidth = backgroundImage.width * ratio;
             const newHeight = backgroundImage.height * ratio;
-            const offsetX = (canvas.width - newWidth) / 2;
-            const offsetY = (canvas.height - newHeight) / 2;
-            ctx.drawImage(backgroundImage, offsetX, offsetY, newWidth, newHeight);
+            const offsetX = (imageCanvas.width - newWidth) / 2;
+            const offsetY = (imageCanvas.height - newHeight) / 2;
+            imageCtx.drawImage(backgroundImage, offsetX, offsetY, newWidth, newHeight);
         }
     }
 
     // Event listeners for touch and mouse
-    canvas.addEventListener('touchstart', startDrawing);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDrawing);
-    canvas.addEventListener('touchcancel', stopDrawing);
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseleave', stopDrawing);
+    drawingCanvas.addEventListener('touchstart', startDrawing);
+    drawingCanvas.addEventListener('touchmove', draw);
+    drawingCanvas.addEventListener('touchend', stopDrawing);
+    drawingCanvas.addEventListener('touchcancel', stopDrawing);
+    drawingCanvas.addEventListener('mousedown', startDrawing);
+    drawingCanvas.addEventListener('mousemove', draw);
+    drawingCanvas.addEventListener('mouseup', stopDrawing);
+    drawingCanvas.addEventListener('mouseleave', stopDrawing);
 
     // Event listener for the clear button
     document.getElementById('clearButton').addEventListener('click', clearCanvas);
@@ -239,7 +258,7 @@
     // Suppress long press on everything except the canvas
     let touchStartTimer;
     document.addEventListener('touchstart', function(e) {
-        if (e.target !== canvas) {
+        if (e.target !== drawingCanvas) {
             touchStartTimer = setTimeout(function() {
                 e.preventDefault();
             }, 1000); // 1000ms = 1 second
@@ -388,8 +407,10 @@
 
     window.addEventListener('resize', function() {
         // Set up the canvas size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
+        imageCanvas.width = window.innerWidth;
+        imageCanvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
+        drawingCanvas.width = window.innerWidth;
+        drawingCanvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
 
         // Redraw the background image
         drawBackgroundImage();
