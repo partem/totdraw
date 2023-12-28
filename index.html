@@ -326,8 +326,13 @@
                   clearCanvas(); // Clear the previous image
                   backgroundImage = newImg;
                   drawBackgroundImage();
-                  modal.style.display = "none";
               }
+              // Draw the thumbnail image first
+              clearCanvas(); // Clear the previous image
+              backgroundImage = img;
+              drawBackgroundImage();
+              modal.style.display = "none"; // Close the modal
+              // Then replace it with the high-quality image
               newImg.src = photo.urls.regular;
             });
             img.addEventListener('contextmenu', function(e) {
