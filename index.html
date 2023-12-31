@@ -323,12 +323,12 @@
             img.addEventListener('click', function() {
               const newImg = new Image();
               newImg.onload = function() {
-                  clearCanvas(); // Clear the previous image
+                  imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear only the image canvas
                   backgroundImage = newImg;
                   drawBackgroundImage();
               }
               // Draw the thumbnail image first
-              clearCanvas(); // Clear the previous image
+              imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear only the image canvas
               backgroundImage = img;
               drawBackgroundImage();
               modal.style.display = "none"; // Close the modal
