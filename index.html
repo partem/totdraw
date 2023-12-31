@@ -328,7 +328,7 @@
                   drawBackgroundImage();
               }
               // Draw the thumbnail image first
-              imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear only the image canvas
+              clearCanvas();
               backgroundImage = img;
               drawBackgroundImage();
               modal.style.display = "none"; // Close the modal
