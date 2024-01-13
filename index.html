@@ -161,8 +161,8 @@
         drawingCtx.lineCap = 'round'; // Line style
         drawingCtx.strokeStyle = currentColor; // Use the selected color
 
-        const x = e.clientX || e.touches[0].clientX;
-        const y = e.clientY || e.touches[0].clientY - drawingCanvas.offsetTop;
+        const x = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const y = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY - drawingCanvas.offsetTop : 0);
 
         drawingCtx.lineTo(x, y); // Draw line
         drawingCtx.stroke();
@@ -223,7 +223,10 @@
     drawingCanvas.addEventListener('mouseleave', stopDrawing);
 
     // Event listener for the clear button
-    document.getElementById('clearButton').addEventListener('click', clearCanvas);
+    document.getElementById('clearButton').addEventListener('click', function() {
+        saveTimestamp();
+        clearCanvas();
+    });
 
     // Event listener for the upload button
     document.getElementById('uploadButton').addEventListener('change', uploadAndDrawBackground);
@@ -320,7 +323,8 @@
             const img = document.createElement('img');
             img.src = photo.urls.thumb;
             img.classList.add('small-image'); // Add the small-image class
-            img.addEventListener('click', function() {
+            img.addEventListener('click', async function() {
+              saveTimestamp(); // Save the timestamp
               const newImg = new Image();
               newImg.onload = function() {
                   imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear only the image canvas
@@ -425,6 +429,7 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+    import { getFirestore, serverTimestamp, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
   
@@ -440,9 +445,17 @@
       measurementId: "G-PHHPM1ZKZT"
     };
   
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
+    const db = getFirestore();
+
+    window.saveTimestamp = async function() {
+        const timestamp = serverTimestamp();
+        const docRef = await addDoc(collection(db, "drawings"), {
+          timestamp: timestamp
+        });
+        console.log("Document written with ID: ", docRef.id);
+    }
   </script>
 </body>
 </html>
