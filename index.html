@@ -446,6 +446,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
     import { getFirestore, serverTimestamp, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage, ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
   
@@ -464,6 +465,11 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore();
+
+    // Get a reference to the storage service, which is used to create references in your storage bucket
+    const storage = getStorage();
+    // Create a storage reference from our storage service
+    const storageRef = ref(storage);
 
     window.saveDrawingInfo = async function(imageInfo) {
         const timestamp = serverTimestamp();
