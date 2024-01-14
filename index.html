@@ -136,6 +136,12 @@
     let backgroundImage = null;
     let currentColor = '#000000'; // Default color
 
+    let currentImageInfo = {
+        unsplashImageCode: null,
+        thumbnailImage: null,
+        normalImageUrl: null
+    };
+
     // Set up the canvas size
     imageCanvas.width = window.innerWidth;
     imageCanvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
@@ -224,7 +230,12 @@
 
     // Event listener for the clear button
     document.getElementById('clearButton').addEventListener('click', function() {
-        saveTimestamp();
+        saveDrawingInfo(currentImageInfo);
+        currentImageInfo = {
+            unsplashImageCode: null,
+            thumbnailImage: null,
+            normalImageUrl: null
+        };
         clearCanvas();
     });
 
@@ -324,7 +335,12 @@
             img.src = photo.urls.thumb;
             img.classList.add('small-image'); // Add the small-image class
             img.addEventListener('click', async function() {
-              saveTimestamp(); // Save the timestamp
+              saveDrawingInfo(currentImageInfo); // Save the timestamp, Unsplash image code, thumbnail image, and normal image URL
+              currentImageInfo = {
+                  unsplashImageCode: photo.id,
+                  thumbnailImage: img.src,
+                  normalImageUrl: photo.urls.regular
+              };
               const newImg = new Image();
               newImg.onload = function() {
                   imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear only the image canvas
@@ -449,10 +465,13 @@
     const analytics = getAnalytics(app);
     const db = getFirestore();
 
-    window.saveTimestamp = async function() {
+    window.saveDrawingInfo = async function(imageInfo) {
         const timestamp = serverTimestamp();
         const docRef = await addDoc(collection(db, "drawings"), {
-          timestamp: timestamp
+            timestamp: timestamp,
+            unsplashImageCode: imageInfo.unsplashImageCode,
+            thumbnailImage: imageInfo.thumbnailImage,
+            normalImageUrl: imageInfo.normalImageUrl
         });
         console.log("Document written with ID: ", docRef.id);
     }
