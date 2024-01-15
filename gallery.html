@@ -23,13 +23,12 @@
         background-color: white;
     }
     .gallery-item img {
-        width: 100px;
+        width: 200px;
         object-fit: contain;
     }
     .gallery-item img:empty {
         display: block;
-        width: 100px;
-        background-color: white;
+        width: 200px;
     }
 </style>
 </head>
@@ -60,6 +59,11 @@
         const querySnapshot = await getDocs(collection(db, "drawings"));
         querySnapshot.forEach((doc) => {
             const data = doc.data();
+            if (!data.fileUrl) {
+                // Skip this document if it doesn't have a drawing filename
+                return;
+            }
+
             const item = document.createElement('div');
             item.className = 'gallery-item';
 
@@ -74,16 +78,22 @@
                 image.src = data.fileUrl;
                 image.alt = "Drawing";
                 image.style.zIndex = 2;
+                image.onload = function() {
+                    if (data.thumbnailImage) {
+                        const thumbnail = document.createElement('img');
+                        thumbnail.src = data.thumbnailImage;
+                        thumbnail.alt = "Thumbnail";
+                        thumbnail.style.position = 'absolute';
+                        thumbnail.style.zIndex = 1;
+                        thumbnail.style.top = '50%';
+                        thumbnail.style.left = '50%';
+                        thumbnail.style.transform = 'translate(-50%, -50%)';
+                        thumbnail.style.height = `${image.height}px`;
+                        thumbnail.style.objectFit = 'contain';
+                        imageWrapper.appendChild(thumbnail);
+                    }
+                }
                 imageWrapper.appendChild(image);
-            }
-
-            if (data.thumbnailImage) {
-                const thumbnail = document.createElement('img');
-                thumbnail.src = data.thumbnailImage;
-                thumbnail.alt = "Thumbnail";
-                thumbnail.style.position = 'absolute';
-                thumbnail.style.zIndex = 1;
-                imageWrapper.appendChild(thumbnail);
             }
 
             item.appendChild(imageWrapper);

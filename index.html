@@ -58,6 +58,8 @@
         normalImageUrl: null
     };
 
+    let isDirty = false; // Add this line at the beginning of your script
+
     // Set up the canvas size
     imageCanvas.width = window.innerWidth;
     imageCanvas.height = window.innerHeight * 0.8; // Adjusted for control buttons height
@@ -67,6 +69,7 @@
     let isDrawing = false;
 
     function startDrawing(e) {
+        isDirty = true; // Set isDirty to true when a drawing action starts
         if (e.touches && e.touches[0].touchType === 'stylus') {
             // Handle Apple Pencil touch
         } else {
@@ -99,6 +102,7 @@
 
     // Clear the canvas and background
     function clearCanvas() {
+        isDirty = false; // Set isDirty to false when the canvas is cleared
         drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
         imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
         backgroundImage = null; // Clear the reference to the background image
@@ -106,6 +110,7 @@
 
     // Upload and draw background image
     function uploadAndDrawBackground(e) {
+        isDirty = false; // Set isDirty to false when a new image is uploaded
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -363,6 +368,9 @@
     }
 
     window.saveDrawingInfo = async function(imageInfo) {
+      if (!isDirty) {
+        return; // If isDirty is false, don't proceed with the save operation
+      }
       const timestamp = serverTimestamp();
       const clientTimestamp = Date.now();
       const randomString = Math.random().toString(36).substring(2);
