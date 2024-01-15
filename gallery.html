@@ -12,23 +12,26 @@
 
 <style>
     .gallery {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        justify-items: center;
     }
     .gallery-item {
         display: grid;
         place-items: center;
         margin: 10px;
         background-color: white;
+        border: 5px solid #000; /* Add a border to create a frame */
+        box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Optional: Add a shadow for a 3D effect */
     }
     .gallery-item img {
-        width: 200px;
+        width: 500px;
         object-fit: contain;
     }
     .gallery-item img:empty {
         display: block;
-        width: 200px;
+        width: 500px;
     }
 </style>
 </head>
@@ -37,9 +40,11 @@
     <!-- Gallery items will be inserted here -->
 </div>
 
+<button id="next-button">Next</button>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit, startAfter } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAgcdCPd-2h3uSbXC9JinxAUYWghjoWuFc",
@@ -54,9 +59,18 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore();
 
+    let lastDoc = null;
+
     async function loadGallery() {
         const gallery = document.getElementById('gallery');
-        const querySnapshot = await getDocs(collection(db, "drawings"));
+        const nextButton = document.getElementById('next-button');
+        let q;
+        if (lastDoc) {
+            q = query(collection(db, "drawings"), orderBy('timestamp', 'desc'), startAfter(lastDoc), limit(10));
+        } else {
+            q = query(collection(db, "drawings"), orderBy('timestamp', 'desc'), limit(10));
+        }
+        const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             if (!data.fileUrl) {
@@ -99,7 +113,17 @@
             item.appendChild(imageWrapper);
             gallery.appendChild(item);
         });
+        lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+        // If the number of documents returned is less than the limit, hide the "Next" button
+        if (querySnapshot.docs.length < 10) {
+            nextButton.style.display = 'none';
+        } else {
+            nextButton.style.display = 'block';
+        }
     }
+
+    document.getElementById('next-button').addEventListener('click', loadGallery);
 
     loadGallery();
 </script>
