@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TotDraw</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="./fav_icon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./fav_icon-16x16.png"> 
+<link rel="apple-touch-icon" href="./fav_icon.png">
+
+<style>
+    .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .gallery-item {
+        display: grid;
+        place-items: center;
+        margin: 10px;
+        background-color: white;
+    }
+    .gallery-item img {
+        width: 100px;
+        object-fit: contain;
+    }
+    .gallery-item img:empty {
+        display: block;
+        width: 100px;
+        background-color: white;
+    }
+</style>
+</head>
+<body>
+<div id="gallery" class="gallery">
+    <!-- Gallery items will be inserted here -->
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgcdCPd-2h3uSbXC9JinxAUYWghjoWuFc",
+      authDomain: "tot-draw.firebaseapp.com",
+      projectId: "tot-draw",
+      storageBucket: "tot-draw.appspot.com",
+      messagingSenderId: "24240794025",
+      appId: "1:24240794025:web:f76288f0668a81115ffcb8",
+      measurementId: "G-PHHPM1ZKZT"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore();
+
+    async function loadGallery() {
+        const gallery = document.getElementById('gallery');
+        const querySnapshot = await getDocs(collection(db, "drawings"));
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+
+            const imageWrapper = document.createElement('div');
+            imageWrapper.style.display = 'flex';
+            imageWrapper.style.justifyContent = 'center';
+            imageWrapper.style.alignItems = 'center';
+            imageWrapper.style.position = 'relative';
+
+            if (data.fileUrl) {
+                const image = document.createElement('img');
+                image.src = data.fileUrl;
+                image.alt = "Drawing";
+                image.style.zIndex = 2;
+                imageWrapper.appendChild(image);
+            }
+
+            if (data.thumbnailImage) {
+                const thumbnail = document.createElement('img');
+                thumbnail.src = data.thumbnailImage;
+                thumbnail.alt = "Thumbnail";
+                thumbnail.style.position = 'absolute';
+                thumbnail.style.zIndex = 1;
+                imageWrapper.appendChild(thumbnail);
+            }
+
+            item.appendChild(imageWrapper);
+            gallery.appendChild(item);
+        });
+    }
+
+    loadGallery();
+</script>
+</body>
+</html>

@@ -20,82 +20,7 @@
 
   gtag('config', 'G-6L1KQZT5MC');
 </script>
-
-<style>
-    body, html { margin: 0; padding: 0; overflow: hidden; }
-    #canvasContainer {
-        position: relative;
-        width: 100%;
-        height: 80%;
-        display: grid;
-    }
-    canvas {
-        grid-area: 1 / 1 / 2 / 2;
-        width: 100%;
-        height: 100%;
-    }
-    #controls { 
-        width: 100%; 
-        height: 20%; 
-        text-align: center; 
-    }
-    .control-button { 
-        font-size: 30px;  
-        padding: 10px;
-        margin: 10px;
-        cursor: pointer;
-        width: 50px; 
-        height: 50px; 
-        border: none;
-    }
-    .hidden {
-        display: none;
-    }
-    .modal {
-        display: none; 
-        position: fixed; 
-        z-index: 1; 
-        left: 0;
-        top: 0;
-        width: 100%; 
-        height: 100%; 
-        overflow: auto; 
-        background-color: rgba(0,0,0,0.4); 
-    }
-    .modal-content {
-        position: relative;
-        background-color: #fefefe;
-        margin: 15% auto; 
-        padding: 20px;
-        border: 1px solid #888;
-        width: 70%; 
-        display: grid;
-        grid-template-columns: repeat(5, 1fr); /* 5 columns */
-        grid-template-rows: repeat(2, 1fr); /* 2 rows */
-        gap: 25px;
-    }
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: #aaa;
-        font-size: 28px;
-        font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .small-image {
-        max-width: 100px;
-        max-height: 100px;
-    }
-    .control-button.pressed {
-        background-color: #717070;
-    }
-</style>
+<link rel="stylesheet" href="main_style.css">
 </head>
 <body>
 <div id="canvasContainer">
@@ -110,15 +35,6 @@
     <button id="greenButton" class="control-button" style="background-color: green;"></button>
     <button id="blueButton" class="control-button" style="background-color: blue;"></button>
     <button id="yellowButton" class="control-button" style="background-color: yellow;"></button>
-    <button id="animalSearchButton" class="control-button">🦁</button>
-    <button id="dinosaurButton" class="control-button">🦖</button>
-    <button id="carButton" class="control-button">🚗</button>
-    <button id="birdButton" class="control-button">🦜</button>
-    <button id="insectButton" class="control-button">🐞</button>
-    <button id="natureButton" class="control-button">🌳</button>
-    <button id="peopleButton" class="control-button">🧑</button>
-    <button id="plantButton" class="control-button">🌿</button>
-    <button id="houseButton" class="control-button">🏠</button>
 </div>
 <div id="myModal" class="modal">
   <span class="close">&times;</span>
@@ -285,26 +201,7 @@
 
     // Modal functionality
     var modal = document.getElementById("myModal");
-    var btn = document.getElementById("animalSearchButton");
-    var dinosaurBtn = document.getElementById("dinosaurButton");
-    var carBtn = document.getElementById("carButton");
-    var birdBtn = document.getElementById("birdButton");
-    var insectBtn = document.getElementById("insectButton");
-    var natureBtn = document.getElementById("natureButton");
-    var peopleBtn = document.getElementById("peopleButton");
-    var plantBtn = document.getElementById("plantButton");
-    var houseBtn = document.getElementById("houseButton");
     var span = document.getElementsByClassName("close")[0];
-
-    let animalPage = 1;
-    let dinosaurPage = 1;
-    let carPage = 1;
-    let birdPage = 1;
-    let insectPage = 1;
-    let naturePage = 1;
-    let peoplePage = 1;
-    let plantPage = 1;
-    let housePage = 1;
 
     function randomColor() {
         const colors = ['red', 'green', 'blue', 'yellow'];
@@ -375,50 +272,32 @@
       .catch(error => console.error(error));
     }
 
-    btn.onclick = function() {
-      fetchImages('animals', animalPage);
-      animalPage++;
-    }
+    const buttonData = [
+        { searchTerm: 'animals', emoji: '🦁' },
+        { searchTerm: 'dinosaurs', emoji: '🦖' },
+        { searchTerm: 'cars', emoji: '🚗' },
+        { searchTerm: 'birds', emoji: '🦜' },
+        { searchTerm: 'insects', emoji: '🐞' },
+        { searchTerm: 'nature', emoji: '🌳' },
+        { searchTerm: 'people', emoji: '🧑' },
+        { searchTerm: 'plants', emoji: '🌿' },
+        { searchTerm: 'houses', emoji: '🏠' }
+    ];
+    const pageData = Array(buttonData.length).fill(1);
 
-    dinosaurBtn.onclick = function() {
-      fetchImages('dinosaurs', dinosaurPage);
-      dinosaurPage++;
-    }
+    const controlsDiv = document.getElementById('controls');
 
-    carBtn.onclick = function() {
-      fetchImages('cars', carPage);
-      carPage++;
-    }
-
-    birdBtn.onclick = function() {
-      fetchImages('birds', birdPage);
-      birdPage++;
-    }
-
-    insectBtn.onclick = function() {
-      fetchImages('insects', insectPage);
-      insectPage++;
-    }
-
-    natureBtn.onclick = function() {
-      fetchImages('nature', naturePage, 'landscape');
-      naturePage++;
-    }
-
-    peopleBtn.onclick = function() {
-      fetchImages('people', peoplePage);
-      peoplePage++;
-    }
-
-    plantBtn.onclick = function() {
-      fetchImages('plants', plantPage);
-      plantPage++;
-    }
-
-    houseBtn.onclick = function() {
-      fetchImages('houses', housePage);
-      housePage++;
-    }
+    buttonData.forEach((button, index) => {
+        let btn = document.createElement('button');
+        btn.id = `${button.searchTerm}Button`;
+        btn.className = 'control-button';
+        btn.innerHTML = button.emoji;
+        btn.onclick = function() {
+            fetchImages(button.searchTerm, pageData[index]);
+            pageData[index]++;
+        }
+        controlsDiv.appendChild(btn);
+    });
 
     span.onclick = function() {
       modal.style.display = "none";
