@@ -33,6 +33,32 @@
         display: block;
         width: 500px;
     }
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        position: fixed; /* Stay in place */
+        z-index: 2; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.4); /* Semi-transparent black */
+    }
+
+    /* Modal Content (image) */
+    .modal-content {
+        width: 80%; /* Adjust this to the desired width */
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+
+    @keyframes zoom {
+        from {transform:scale(0)} 
+        to {transform:scale(1)}
+    }
 </style>
 </head>
 <body>
@@ -60,6 +86,7 @@
     const db = getFirestore();
 
     let lastDoc = null;
+    let modal = null;
 
     async function loadGallery() {
         const gallery = document.getElementById('gallery');
@@ -71,6 +98,15 @@
             q = query(collection(db, "drawings"), orderBy('timestamp', 'desc'), limit(10));
         }
         const querySnapshot = await getDocs(q);
+
+        // Create the modal
+        modal = document.createElement('div');
+        modal.className = 'modal';
+        const modalImg = document.createElement('img');
+        modalImg.className = 'modal-content';
+        modal.appendChild(modalImg);
+        document.body.appendChild(modal);
+
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             if (!data.fileUrl) {
@@ -92,6 +128,49 @@
                 image.src = data.fileUrl;
                 image.alt = "Drawing";
                 image.style.zIndex = 2;
+
+                // Add click event to open the modal
+                image.onclick = function() {
+                    modal.style.display = "block";
+                    modal.innerHTML = ''; 
+
+                    // Create a wrapper for the modal image and the background image
+                    const modalWrapper = document.createElement('div');
+                    modalWrapper.style.display = 'flex';
+                    modalWrapper.style.justifyContent = 'center';
+                    modalWrapper.style.alignItems = 'center';
+                    modalWrapper.style.position = 'absolute'; // Change from 'relative' to 'absolute'
+                    modalWrapper.style.top = '50%';
+                    modalWrapper.style.left = '50%';
+                    modalWrapper.style.transform = 'translate(-50%, -50%)';
+                    modalWrapper.style.width = '95%'; // Set the width
+                    modalWrapper.style.border = '5px solid #000'; // Set the border
+                    modalWrapper.style.backgroundColor = 'white'; // Set the background color
+
+                    // Set the modal image
+                    modalImg.src = this.src;
+                    modalImg.style.zIndex = 2;
+
+                    // Set the background image
+                    const backgroundImage = document.createElement('img');
+                    backgroundImage.src = data.normalImageUrl;
+                    backgroundImage.style.position = 'absolute';
+                    backgroundImage.style.zIndex = 1;
+                    backgroundImage.style.top = '50%';
+                    backgroundImage.style.left = '50%';
+                    backgroundImage.style.transform = 'translate(-50%, -50%)';
+                    backgroundImage.style.objectFit = 'contain';
+                    backgroundImage.style.width = '100%';
+                    backgroundImage.style.height = '100%';
+
+                    // Add the modal image and the background image to the wrapper
+                    modalWrapper.appendChild(backgroundImage);
+                    modalWrapper.appendChild(modalImg);
+
+                    // Add the wrapper to the modal
+                    modal.appendChild(modalWrapper);
+                }
+
                 image.onload = function() {
                     if (data.thumbnailImage) {
                         const thumbnail = document.createElement('img');
@@ -120,6 +199,13 @@
             nextButton.style.display = 'none';
         } else {
             nextButton.style.display = 'block';
+        }
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
     }
 

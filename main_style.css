@@ -71,3 +71,10 @@ canvas {
 .control-button.pressed {
     background-color: #717070;
 }
+
+#gallery-link {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: small;
+}
