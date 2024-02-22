@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Maze Drawer</title>
+    <style>
+        .maze-container {
+            display: grid;
+            grid-template-columns: repeat(28, 20px);
+            grid-gap: 1px;
+        }
+        .maze-cell {
+            width: 20px;
+            height: 20px;
+        }
+        .black {
+            background-color: black;
+        }
+        .white {
+            background-color: white;
+        }
+        .start { /* New class for 'S' */
+            background-color: red;
+        }
+        .end { /* New class for 'E' */
+            background-color: green;
+        }
+        .player {
+            background-color: brown;
+        }
+    </style>
+</head>
+<body>
+    <div id="maze"></div>
+
+    <script>
+            const mazeData = [
+            "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x",
+                "x,,,s,,,,,x,x,,,,x,,,,,,,x,x,x,x,x,x,x,x",
+                "x,,x,x,x,x,x,x,x,,,x,,x,,x,x,x,x,,,,,,,,x,x",
+                "x,,,,,,,,x,x,,x,,x,,,,,x,,x,x,x,x,x,x,x,x",
+                "x,x,x,,,,,,x,,,x,,x,x,x,x,,x,,,,,,,,,x",
+                "x,,x,,x,x,x,x,x,x,,x,,,,,x,,x,x,x,x,x,x,x,x,,x",
+                "x,,x,,x,,,,,x,,x,x,x,x,,x,,x,,,,,,,,,x",
+                "x,,x,,x,,x,x,,x,,,,x,x,,x,,x,,x,x,x,x,x,x,x,x",
+                "x,,x,,x,,x,,,x,,x,,,x,,x,,x,,,,x,,,,,x",
+                "x,,x,,x,,x,,x,x,x,x,x,,x,,x,,x,x,x,,x,,x,x,,x",
+                "x,,x,,,,x,,x,,,,x,,x,,x,,x,,,,x,,x,,,x",
+                "x,,x,x,x,x,x,,x,,x,,x,,x,,x,,x,,x,x,x,,x,,x,x",
+                "x,,,,,,x,,x,,x,,x,,x,,x,,x,,,,,,x,,x,x",
+                "x,,x,x,x,,x,,x,,x,,x,,x,,x,,x,x,x,x,x,x,x,,x,x",
+                "x,,x,,x,,x,,x,,x,,x,,x,,x,,,,,,x,x,x,,x,x",
+                "x,,x,,x,,,,x,,x,,x,,x,,x,,x,x,x,x,x,,,,x,x",
+                "x,,x,,x,x,x,x,x,,x,,x,,x,,x,,x,,,,,,,,x,x",
+                "x,,x,,,,,,,,x,,x,,x,,x,,x,,,,,,,,x,x",
+                "x,,x,,x,x,x,x,x,x,x,,x,,x,,x,,x,,x,x,x,x,x,x,x,x",
+                "x,,,,x,,,,x,,,,x,,x,,x,,x,,,,,,,,,x",
+                "x,x,x,x,x,,x,,x,,x,,x,,x,,x,,x,x,x,x,x,x,x,x,,x",
+                "x,,,,,,x,,,,x,,x,,x,,x,,x,,,,,,,,,x",
+                "x,,x,x,x,x,x,x,x,x,x,x,x,,x,,x,,x,x,x,x,,x,x,x,,x",
+                "x,,,,,,,,,,,,,,x,,x,,,,,x,,,,x,,x",
+                "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,,x,,,,,x,x,x,,x,,x",
+                "x,x,,,,,x,,,,x,,,,x,,x,x,x,x,,x,,,,x,,x",
+                "x,,,,x,,,,x,,,,x,,,,,,,,,x,,x,e,x,,x",
+                "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x"
+            ];
+
+        let playerPosition = { row: 1, col: 3 }; // Initialize player position
+
+        function drawMaze(mazeData) {
+            const mazeContainer = document.getElementById('maze');
+            mazeContainer.innerHTML = ''; // Clear previous maze
+            mazeContainer.className = 'maze-container';
+
+            mazeData.forEach((row, rowIndex) => {
+                row.split(',').forEach((cell, colIndex) => {
+                    const cellElement = document.createElement('div');
+                    let cellClass = 'maze-cell ';
+                    if(rowIndex === playerPosition.row && colIndex === playerPosition.col) {
+                        cellClass += 'player'; // Add player class
+                    } else {
+                        switch(cell) {
+                            case 'x':
+                                cellClass += 'black';
+                                break;
+                            case 's':
+                                cellClass += 'start';
+                                break;
+                            case 'e':
+                                cellClass += 'end';
+                                break;
+                            default:
+                                cellClass += 'white';
+                        }
+                    }
+                    cellElement.className = cellClass;
+                    mazeContainer.appendChild(cellElement);
+                });
+            });
+        }
+
+        function movePlayer(event) {
+            let newRow = playerPosition.row;
+            let newCol = playerPosition.col;
+
+            switch(event.key) {
+                case 'ArrowUp':
+                    newRow--;
+                    break;
+                case 'ArrowDown':
+                    newRow++;
+                    break;
+                case 'ArrowLeft':
+                    newCol--;
+                    break;
+                case 'ArrowRight':
+                    newCol++;
+                    break;
+            }
+
+            // Check for walls and boundaries
+            if(mazeData[newRow] && mazeData[newRow].split(',')[newCol] !== 'x') {
+                playerPosition = { row: newRow, col: newCol };
+                drawMaze(mazeData); // Redraw maze with new player position
+
+                // Check for win condition
+                if(mazeData[newRow].split(',')[newCol] === 'e') {
+                    alert('You win!');
+                }
+            }
+        }
+
+        document.addEventListener('keydown', movePlayer);
+
+        drawMaze(mazeData);
+    </script>
+</body>
+</html>

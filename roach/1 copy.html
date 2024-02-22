@@ -6,23 +6,12 @@
     <style>
         .maze-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0; /* Remove space between blocks */
-            width: 50vw; /* Adjust based on desired size, keeping aspect ratio */
-            height: 50vw; /* Same as width to maintain square cells */
-            justify-content: center;
-            align-items: center;
-            position: absolute; /* For centering */
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            grid-template-columns: repeat(3, 20px);
+            grid-gap: 1px;
         }
         .maze-cell {
-            width: 100%;
-            height: 100%; /* Adjusted to fill the parent container */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 20px;
+            height: 20px;
         }
         .black {
             background-color: black;
@@ -88,19 +77,15 @@
 
             switch(key) {
                 case 'ArrowUp':
-                case 'w': // Add 'w' for moving up
                     newRow -= 1;
                     break;
                 case 'ArrowDown':
-                case 's': // Add 's' for moving down
                     newRow += 1;
                     break;
                 case 'ArrowLeft':
-                case 'a': // Add 'a' for moving left
                     newCol -= 1;
                     break;
                 case 'ArrowRight':
-                case 'd': // Add 'd' for moving right
                     newCol += 1;
                     break;
                 default:
@@ -130,7 +115,7 @@
             const mazeContainer = document.getElementById('maze');
             mazeContainer.innerHTML = ''; // Clear the maze container
             mazeContainer.className = 'maze-container';
-            mazeContainer.style.gridTemplateColumns = 'repeat(3, 1fr)'; // Set grid for 3 columns
+            mazeContainer.style.gridTemplateColumns = 'repeat(3, 20px)'; // Set grid for 3 columns
 
             // Define the positions of the neighbors relative to the current cell
             const positions = [
